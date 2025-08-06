@@ -4,18 +4,19 @@ import {
   Stepper,
   Step,
   StepLabel,
+  StepButton,
   Button,
   Typography,
   Paper,
-  Container,
-  StepContent
+  Container
 } from '@mui/material';
 import {
   CloudUpload,
   Edit,
   Download,
   NavigateNext,
-  NavigateBefore
+  NavigateBefore,
+  Check
 } from '@mui/icons-material';
 
 // Step Components
@@ -26,22 +27,40 @@ import MedicalAnnotationHelper from './MedicalAnnotationHelper';
 import ExportPanel from './ExportPanel';
 
 const steps = [
-  {
-    label: 'Upload Document',
-    description: 'Upload PDF or enter text for annotation',
-    icon: <CloudUpload />
-  },
-  {
-    label: 'Annotate Entities',
-    description: 'Select text and assign medical entity labels',
-    icon: <Edit />
-  },
-  {
-    label: 'Export Results',
-    description: 'Download annotations in various formats',
-    icon: <Download />
-  }
+  'Upload File or Add Text',
+  'Annotate Entities', 
+  'Export'
 ];
+
+// Custom Step Icon Component
+function CustomStepIcon(props) {
+  const { active, completed, className, icon } = props;
+
+  return (
+    <div className={className}>
+      {completed ? (
+        <Check sx={{ fontSize: '1.5rem', color: 'success.main' }} />
+      ) : (
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            color: active ? 'white' : 'text.secondary',
+            fontWeight: 'bold',
+            backgroundColor: active ? 'primary.main' : 'grey.300',
+            borderRadius: '50%',
+            width: 32,
+            height: 32,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {icon}
+        </Typography>
+      )}
+    </div>
+  );
+}
 
 const StepperWorkflow = ({
   text,
@@ -60,17 +79,52 @@ const StepperWorkflow = ({
   backendStatus
 }) => {
   const [activeStep, setActiveStep] = useState(0);
+  const [completed, setCompleted] = useState({});
+
+  const totalSteps = () => {
+    return steps.length;
+  };
+
+  const completedSteps = () => {
+    return Object.keys(completed).length;
+  };
+
+  const isLastStep = () => {
+    return activeStep === totalSteps() - 1;
+  };
+
+  const allStepsCompleted = () => {
+    return completedSteps() === totalSteps();
+  };
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    const newActiveStep =
+      isLastStep() && !allStepsCompleted()
+        ? // It's the last step, but not all steps have been completed,
+          // find the first step that has been completed
+          steps.findIndex((step, i) => !(i in completed))
+        : activeStep + 1;
+    setActiveStep(newActiveStep);
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleStep = (step) => () => {
+    setActiveStep(step);
+  };
+
+  const handleComplete = () => {
+    const newCompleted = completed;
+    newCompleted[activeStep] = true;
+    setCompleted(newCompleted);
+    handleNext();
+  };
+
   const handleReset = () => {
     setActiveStep(0);
+    setCompleted({});
     setAnnotations([]);
     setSelectedText(null);
     setText('');
@@ -97,7 +151,7 @@ const StepperWorkflow = ({
         return (
           <Box sx={{ mt: 2 }}>
             <Typography variant="h6" gutterBottom>
-              📄 Step 1: Upload Document or Enter Text
+              Step 1: Upload Document or Enter Text
             </Typography>
             
             {/* Backend Status Indicator */}
@@ -110,8 +164,8 @@ const StepperWorkflow = ({
               color: 'white',
               textAlign: 'center'
             }}>
-              Backend: {backendStatus === 'connected' ? '🟢 Connected' : 
-                       backendStatus === 'disconnected' ? '🔴 Disconnected' : '🟡 Checking...'}
+              Backend: {backendStatus === 'connected' ? 'Connected' : 
+                       backendStatus === 'disconnected' ? 'Disconnected' : 'Checking...'}
             </Box>
 
             {/* PDF Upload */}
@@ -161,7 +215,7 @@ const StepperWorkflow = ({
             {text && (
               <Paper sx={{ p: 2, mt: 2, bgcolor: 'grey.50' }}>
                 <Typography variant="subtitle1" gutterBottom>
-                  📋 Text Preview ({text.length} characters)
+                  Text Preview ({text.length} characters)
                 </Typography>
                 <Typography variant="body2" sx={{ 
                   maxHeight: '150px', 
@@ -180,12 +234,28 @@ const StepperWorkflow = ({
         return (
           <Box sx={{ mt: 2 }}>
             <Typography variant="h6" gutterBottom>
-              🏷️ Step 2: Annotate Medical Entities
+              Step 2: Annotate Medical Entities
             </Typography>
             
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: 2 }}>
+            {/* Annotation stats at top */}
+            {annotations.length === 0 ? (
+              <Paper sx={{ p: 2, mb: 2, bgcolor: 'grey.100', textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Select text below to start annotating
+                </Typography>
+              </Paper>
+            ) : (
+              <Paper sx={{ p: 2, mb: 2, bgcolor: 'success.light', textAlign: 'center' }}>
+                <Typography variant="body2" color="success.dark">
+                  {annotations.length} annotations created
+                </Typography>
+              </Paper>
+            )}
+
+            {/* Text and entity types side by side */}
+            <Box sx={{ display: 'flex', gap: 2 }}>
               {/* Main text area */}
-              <Paper sx={{ p: 2 }}>
+              <Paper sx={{ p: 3, flex: 1 }}>
                 <TextDisplay
                   text={text}
                   annotations={annotations}
@@ -194,15 +264,8 @@ const StepperWorkflow = ({
                 />
               </Paper>
 
-              {/* Sidebar with controls */}
-              <Box sx={{ display: 'grid', gap: 2 }}>
-                <MedicalAnnotationHelper
-                  selectedText={selectedText}
-                  entities={entities}
-                  onEntitySelect={onEntitySelect}
-                  annotations={annotations}
-                />
-                
+              {/* Entity types sidebar */}
+              <Box sx={{ width: '350px' }}>
                 <EntityLabeler
                   entities={entities}
                   onEntitySelect={onEntitySelect}
@@ -213,13 +276,15 @@ const StepperWorkflow = ({
               </Box>
             </Box>
 
-            {/* Progress indicator */}
-            <Paper sx={{ p: 2, mt: 2, bgcolor: 'info.light', color: 'white' }}>
-              <Typography variant="body2">
-                📊 Progress: {annotations.length} annotations created
-                {annotations.length === 0 && ' - Select text to start annotating!'}
-              </Typography>
-            </Paper>
+            {/* Medical annotation helper below */}
+            <Box sx={{ mt: 2 }}>
+              <MedicalAnnotationHelper
+                selectedText={selectedText}
+                entities={entities}
+                onEntitySelect={onEntitySelect}
+                annotations={annotations}
+              />
+            </Box>
           </Box>
         );
 
@@ -227,13 +292,13 @@ const StepperWorkflow = ({
         return (
           <Box sx={{ mt: 2 }}>
             <Typography variant="h6" gutterBottom>
-              📥 Step 3: Export Annotations
+              Step 3: Export Annotations
             </Typography>
             
             {/* Summary */}
             <Paper sx={{ p: 2, mb: 2, bgcolor: 'success.light', color: 'white' }}>
               <Typography variant="h6" gutterBottom>
-                ✅ Annotation Complete!
+                Annotation Complete
               </Typography>
               <Typography variant="body1">
                 Document: {text.length} characters
@@ -253,7 +318,7 @@ const StepperWorkflow = ({
             {/* Options to restart */}
             <Paper sx={{ p: 2, mt: 2 }}>
               <Typography variant="subtitle1" gutterBottom>
-                🔄 Next Steps
+                Next Steps
               </Typography>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Button 
@@ -290,27 +355,48 @@ const StepperWorkflow = ({
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
-          🏥 Medical NER Annotation Tool
+          Medical NER Annotation Tool
         </Typography>
         <Typography variant="h6" color="text.secondary">
           German Stroke Document Entity Recognition
         </Typography>
       </Box>
 
-      {/* Stepper */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Stepper activeStep={activeStep} orientation="horizontal">
+      {/* Non-Linear Stepper */}
+      <Paper sx={{ 
+        p: 3, 
+        mb: 3, 
+        bgcolor: 'grey.50',
+        borderRadius: 2
+      }}>
+        <Stepper 
+          nonLinear 
+          activeStep={activeStep}
+        >
           {steps.map((step, index) => (
-            <Step key={step.label}>
-              <StepLabel
-                icon={step.icon}
-                error={activeStep > index && !isStepValid(index)}
-              >
-                <Typography variant="subtitle1">{step.label}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {step.description}
-                </Typography>
-              </StepLabel>
+            <Step key={step} completed={completed[index]}>
+              <StepButton
+  color="inherit"
+  onClick={handleStep(index)}
+  disabled={index === 2 && annotations.length === 0}
+>
+                <StepLabel
+                  StepIconComponent={(props) => (
+                    <CustomStepIcon {...props} icon={index + 1} />
+                  )}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: index === activeStep ? 'bold' : 'medium',
+                      color: index === activeStep ? 'primary.main' : 
+                             completed[index] ? 'success.main' : 'text.primary'
+                    }}
+                  >
+                    Step {index + 1}: {step}
+                  </Typography>
+                </StepLabel>
+              </StepButton>
             </Step>
           ))}
         </Stepper>
@@ -322,7 +408,7 @@ const StepperWorkflow = ({
       </Paper>
 
       {/* Navigation */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
         <Button
           disabled={activeStep === 0}
           onClick={handleBack}
@@ -332,27 +418,78 @@ const StepperWorkflow = ({
           Back
         </Button>
         
-        <Box sx={{ flex: '1 1 auto' }} />
+        {/* Progress Indicator */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2,
+          bgcolor: 'grey.100',
+          px: 3,
+          py: 1,
+          borderRadius: 3,
+          minWidth: '200px',
+          justifyContent: 'center'
+        }}>
+          <Typography variant="body2" color="text.secondary">
+            Completed:
+          </Typography>
+          <Typography variant="body1" fontWeight="bold" color="primary.main">
+            {completedSteps()}/{totalSteps()}
+          </Typography>
+          <Box sx={{ 
+            width: 80, 
+            height: 6, 
+            bgcolor: 'grey.300', 
+            borderRadius: 3,
+            overflow: 'hidden'
+          }}>
+            <Box sx={{ 
+              width: `${(completedSteps() / totalSteps()) * 100}%`, 
+              height: '100%', 
+              bgcolor: 'primary.main',
+              transition: 'width 0.3s ease'
+            }} />
+          </Box>
+        </Box>
         
-        {activeStep < steps.length - 1 && (
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={!isStepValid(activeStep)}
-            endIcon={<NavigateNext />}
-          >
-            {activeStep === steps.length - 2 ? 'Finish Annotation' : 'Next'}
-          </Button>
-        )}
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {completed[activeStep] ? (
+            <Button
+              variant="outlined"
+              onClick={handleNext}
+              endIcon={<NavigateNext />}
+            >
+              Next Step
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleComplete}
+              disabled={!isStepValid(activeStep)}
+            >
+              Complete Step
+            </Button>
+          )}
+          
+          {allStepsCompleted() && (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleReset}
+            >
+              Reset All
+            </Button>
+          )}
+        </Box>
       </Box>
 
       {/* Step validation messages */}
       {!isStepValid(activeStep) && (
         <Paper sx={{ p: 2, mt: 2, bgcolor: 'warning.light' }}>
           <Typography variant="body2" color="warning.dark">
-            ⚠️ {activeStep === 0 ? 'Please upload a PDF or enter text to continue' :
-                 activeStep === 1 ? 'Please create at least one annotation to continue' :
-                 'Complete the current step to proceed'}
+            {activeStep === 0 ? 'Please upload a PDF or enter text to continue' :
+             activeStep === 1 ? 'Please create at least one annotation to continue' :
+             'Complete the current step to proceed'}
           </Typography>
         </Paper>
       )}
