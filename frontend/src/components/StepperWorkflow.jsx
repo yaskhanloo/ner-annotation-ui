@@ -351,7 +351,13 @@ const StepperWorkflow = ({
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container 
+      maxWidth={false} // Use maxWidth={false} to override default widths
+      sx={{ 
+        py: 4, 
+        width: 900, // Fixed width
+        margin: '0 auto' // Center the container
+      }}>
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
