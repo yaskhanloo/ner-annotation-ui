@@ -44,7 +44,7 @@ const TextDisplay = ({ text, annotations, onSelection, entities }) => {
       if (currentIndex < annotation.start) {
         spans.push(
           <span key={`text-${index}`}>
-            {text.substring(currentIndex, annotation.start)}
+            {text.substring(currentIndex, annotation.start).split('\\n').map((item, key) => <React.Fragment key={key}>{item}<br /></React.Fragment>)}
           </span>
         );
       }
@@ -77,7 +77,7 @@ const TextDisplay = ({ text, annotations, onSelection, entities }) => {
     if (currentIndex < text.length) {
       spans.push(
         <span key="text-end">
-          {text.substring(currentIndex)}
+          {text.substring(currentIndex).split('\\n').map((item, key) => <React.Fragment key={key}>{item}<br /></React.Fragment>)}
         </span>
       );
     }
