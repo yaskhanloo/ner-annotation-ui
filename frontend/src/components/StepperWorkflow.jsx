@@ -253,7 +253,7 @@ const StepperWorkflow = ({
             )}
 
             {/* Text and entity types side by side */}
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
               {/* Main text area */}
               <Paper sx={{ p: 3, flex: 1 }}>
                 <TextDisplay
