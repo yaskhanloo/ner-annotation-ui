@@ -372,6 +372,7 @@ const StepperWorkflow = ({
         <Stepper 
           nonLinear 
           activeStep={activeStep}
+          connector={null}
         >
           {steps.map((step, index) => (
             <Step key={step} completed={completed[index]}>
