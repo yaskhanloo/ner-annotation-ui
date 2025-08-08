@@ -1,4 +1,4 @@
-// vite.config.ts
+// vite.config.js
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
           target,              // backend target (from above)
           changeOrigin: true,  // changes origin header to match backend
           ws: true,            // proxy WebSocket connections too
-          rewrite: (path) => path.replace(/^\/api/, ''), // strip '/api' from path
+          rewrite: (path) => path, // keep '/api' in path
           secure: false        // allow self-signed HTTPS certs
         }
       },

@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { spawn } from 'child_process';
@@ -35,12 +35,12 @@ if (!fs.existsSync('uploads')) {
 // Routes
 
 // Health check
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
 // Upload and parse PDF
-app.post('/api/upload-pdf', upload.single('pdf'), async (req: Request, res: Response) => {
+app.post('/api/upload-pdf', upload.single('pdf'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No PDF file uploaded' });
@@ -86,7 +86,7 @@ app.post('/api/upload-pdf', upload.single('pdf'), async (req: Request, res: Resp
       try {
         const parsedData = JSON.parse(result);
         res.json({ text: parsedData.text, filename: req.file?.originalname });
-      } catch (parseError: any) {
+      } catch (parseError) {
         res.status(500).json({ 
           error: 'Failed to parse PDF response', 
           details: parseError.message,
@@ -95,39 +95,39 @@ app.post('/api/upload-pdf', upload.single('pdf'), async (req: Request, res: Resp
       }
     });
 
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
 
 // Get annotations for a document
-app.get('/api/annotations/:documentId', (req: Request, res: Response) => {
+app.get('/api/annotations/:documentId', (req, res) => {
   // TODO: Implement database storage
   res.json({ annotations: [] });
 });
 
 // Save annotations for a document
-app.post('/api/annotations/:documentId', (req: Request, res: Response) => {
+app.post('/api/annotations/:documentId', (req, res) => {
   const { annotations } = req.body;
   // TODO: Implement database storage
   res.json({ success: true, message: 'Annotations saved' });
 });
 
 // Get entity types
-app.get('/api/entities', (req: Request, res: Response) => {
+app.get('/api/entities', (req, res) => {
   // TODO: Implement database storage
   res.json({ entities: [] });
 });
 
 // Create new entity type
-app.post('/api/entities', (req: Request, res: Response) => {
+app.post('/api/entities', (req, res) => {
   const { label, description, color } = req.body;
   // TODO: Implement database storage
   res.json({ success: true, entityId: Date.now().toString() });
 });
 
 // Export annotations
-app.get('/api/export/:documentId/:format', (req: Request, res: Response) => {
+app.get('/api/export/:documentId/:format', (req, res) => {
   const { documentId, format } = req.params;
   // TODO: Implement export functionality
   res.json({ success: true, format, documentId });

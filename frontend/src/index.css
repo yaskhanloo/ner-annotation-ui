@@ -3,16 +3,17 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light dark; /* let browser auto-switch if supported */
+  color: rgba(255, 255, 255, 0.87); /* default text color */
+  background-color: #242424; /* default background */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; /* macOS font smoothing */
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Link styles */
 a {
   font-weight: 500;
   color: #646cff;
@@ -54,6 +55,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light mode overrides */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
