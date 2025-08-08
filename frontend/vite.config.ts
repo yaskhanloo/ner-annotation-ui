@@ -1,4 +1,4 @@
-// vite.config.js
+// vite.config.ts
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -10,19 +10,17 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      port: 3000,
-      open: true,
+      port: 3000,          // FE runs on localhost:3000
+      open: true,          // auto-opens browser on start
       proxy: {
         '/api': {
-          target,
-          changeOrigin: true,
-          ws: true,
-          // remove '/api' before hitting backend (so FE `/api/users` -> BE `/users`)
-          rewrite: (path) => path.replace(/^\/api/, ''),
-          // set to false if your backend uses self-signed HTTPS
-          secure: false
+          target,              // backend target (from above)
+          changeOrigin: true,  // changes origin header to match backend
+          ws: true,            // proxy WebSocket connections too
+          rewrite: (path) => path.replace(/^\/api/, ''), // strip '/api' from path
+          secure: false        // allow self-signed HTTPS certs
         }
-      }
+      },
     }
   }
 })
