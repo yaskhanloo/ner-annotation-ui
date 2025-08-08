@@ -2,7 +2,7 @@
 
 A production-ready hybrid web application for Named Entity Recognition (NER) annotation of German medical documents, specifically optimized for stroke intervention reports. Features a guided 3-step workflow with Material-UI stepper interface.
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### **Hybrid Stack**
 - **Frontend**: React 19.1.0 + Vite 7.0.4 + Material-UI 7.2.0 + Styled Components
@@ -16,7 +16,7 @@ A production-ready hybrid web application for Named Entity Recognition (NER) ann
 - Backend API: `http://localhost:3001` (Express server)
 - PDF Parser: Python subprocess integration
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ner-annotation-ui/
@@ -46,7 +46,7 @@ ner-annotation-ui/
 └── node_modules/                       # Root dependencies (concurrently)
 ```
 
-## 🔬 Medical Entity Types (15 Categories)
+## Medical Entity Types (15 Categories)
 
 **Optimized for German stroke intervention reports:**
 
@@ -66,7 +66,7 @@ ner-annotation-ui/
 14. **STUDY_STATUS** - Clinical study info (Studienpatient: Nein)
 15. **DATETIME** - Timestamps (02.12.2024 12:42)
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### **Core Endpoints**
 - `GET /api/health` - Backend health check
@@ -84,7 +84,7 @@ ner-annotation-ui/
 - **Restrictions**: PDF files only
 - **Response**: `{ text, filename, pages, word_count, extraction_method }`
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 ```bash
@@ -127,7 +127,7 @@ npm run build        # Builds frontend for production
 npm run start        # Runs backend + frontend preview
 ```
 
-## 🔍 PDF Processing Pipeline
+## PDF Processing Pipeline
 
 ### **Enhanced Extraction (pdf_parser.py)**
 1. **Primary Method**: Layout-preserving extraction with `x_tolerance=2, y_tolerance=2`
@@ -141,11 +141,11 @@ npm run start        # Runs backend + frontend preview
 
 ### **Text Quality Assessment**
 Based on your sample extraction:
-- ✅ **Excellent**: Names, medical scores, procedures preserved
-- ✅ **Good**: Page breaks, device specifications, anatomical terms
-- ✅ **Robust**: Multi-language support (German medical terminology)
+- **Excellent**: Names, medical scores, procedures preserved
+- **Good**: Page breaks, device specifications, anatomical terms
+- **Robust**: Multi-language support (German medical terminology)
 
-## 📊 Export Formats
+## Export Formats
 
 ### **1. Enhanced JSON** (`medical_ner_annotations_YYYY-MM-DD.json`)
 ```json
@@ -224,7 +224,7 @@ Reperfusion     O
 }
 ```
 
-## 🧠 Smart Annotation Features
+## Smart Annotation Features
 
 ### **MedicalAnnotationHelper Component**
 - **Contextual Suggestions**: AI-powered entity recommendations
@@ -232,29 +232,29 @@ Reperfusion     O
 - **Real-time Statistics**: Annotation progress tracking
 - **Search Filtering**: Find specific medical terms quickly
 
-### **3-Step Guided Workflow** 🎯
+### **3-Step Guided Workflow** 
 
-#### **Step 1: Upload Document** 📄
+#### **Step 1: Upload Document** 
 - **PDF Upload**: Drag & drop interface with automatic text extraction
 - **Manual Text Input**: Direct text entry with validation
 - **Backend Status**: Real-time connection monitoring
 - **Text Preview**: Character count and content preview
 - **Validation**: Requires valid text input to proceed
 
-#### **Step 2: Annotate Entities** 🏷️
+#### **Step 2: Annotate Entities** 
 - **Smart Suggestions**: AI-powered entity recommendations with confidence scores
 - **Interactive Text**: Select text to see contextual entity suggestions
 - **Visual Feedback**: Real-time annotation progress tracking
 - **Entity Management**: 15 specialized medical entity types
 - **Validation**: Requires at least one annotation to proceed
 
-#### **Step 3: Export Results** 📥
+#### **Step 3: Export Results** 
 - **Completion Summary**: Document and annotation statistics
 - **Multi-format Export**: JSON, spaCy, CoNLL-2003, Hugging Face formats
 - **Workflow Control**: Options to restart, edit, or begin new document
 - **Professional Output**: Timestamped files with rich metadata
 
-## 🎨 Material-UI Stepper Implementation
+## Material-UI Stepper Implementation
 
 ### **StepperWorkflow Component**
 ```jsx
@@ -297,7 +297,7 @@ const isStepValid = (step) => {
 - **Background**: Light grey (#f5f5f5) for reduced eye strain
 - **Typography**: System fonts for cross-platform consistency
 
-## 🛠️ Development Commands
+## Development Commands
 
 ### **Root Scripts**
 ```bash
@@ -332,7 +332,7 @@ python3 backend/pdf_parser.py document.pdf output.json
 python3 -c "import pdfplumber; print('pdfplumber ready!')"
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### **Environment Variables**
 ```bash
@@ -347,7 +347,7 @@ NODE_ENV=development               # Environment mode
 const API_BASE_URL = 'http://localhost:3001/api';
 ```
 
-## 📈 Performance & Scalability
+## Performance & Scalability
 
 ### **Frontend Optimizations**
 - **React 19**: Latest performance improvements
@@ -368,7 +368,7 @@ const API_BASE_URL = 'http://localhost:3001/api';
 - **Medical Text Preprocessing**: Domain-specific optimizations
 - **Memory Efficient**: Streaming processing for large files
 
-## 🚨 Known Issues & Solutions
+## Known Issues & Solutions
 
 ### **Common Problems**
 1. **"pdfplumber not found"**: Install with `pip install pdfplumber`
@@ -388,9 +388,9 @@ python3 -c "import pdfplumber; print('OK')"
 lsof -i :3000,3001
 ```
 
-## 🎯 Next Steps & Roadmap
+## Next Steps & Roadmap
 
-### **Phase 1: Core Features** ✅
+### **Phase 1: Core Features** 
 - [x] PDF upload & text extraction
 - [x] Medical entity types (15 categories)
 - [x] Smart annotation suggestions
@@ -399,14 +399,14 @@ lsof -i :3000,3001
 - [x] Step validation & navigation logic
 - [x] Professional UI with guided experience
 
-### **Phase 2: Advanced Features** 🔄
+### **Phase 2: Advanced Features** 
 - [ ] Database persistence (MongoDB/PostgreSQL)
 - [ ] User authentication & project management
 - [ ] Batch PDF processing
 - [ ] Inter-annotator agreement metrics
 - [ ] Custom entity type creation UI
 
-### **Phase 3: ML Integration** 🎯
+### **Phase 3: ML Integration** 
 - [ ] Pre-annotation with existing models
 - [ ] Active learning suggestions
 - [ ] Model training pipeline integration
@@ -414,12 +414,10 @@ lsof -i :3000,3001
 
 ---
 
-## 📞 Support & Feedback
+## Support & Feedback
 
 For technical issues or feature requests, check the console logs and verify:
 1. Backend server running on port 3001
 2. Frontend accessible on port 3000  
 3. Python dependencies installed
 4. PDF files are valid and readable
-
-**Happy Annotating! 🏥📝**
