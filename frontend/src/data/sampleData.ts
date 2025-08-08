@@ -1,13 +1,28 @@
-// src/data/sampleData.js
+// src/data/sampleData.ts
 
-export const SAMPLE_TEXT = `Der Patient Dr. Schmidt wurde am 15. März 2024 mit akuten Schlaganfall-Symptomen in die Klinik München eingeliefert. Die Computertomographie-Angiographie zeigte eine Okklusion der Arteria cerebri media mit einem TICI-Score von 0.
+export interface Entity {
+  id: string;
+  label: string;
+  color: string;
+  description: string;
+}
+
+export interface Annotation {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+  entity: string;
+}
+
+export const SAMPLE_TEXT: string = `Der Patient Dr. Schmidt wurde am 15. März 2024 mit akuten Schlaganfall-Symptomen in die Klinik München eingeliefert. Die Computertomographie-Angiographie zeigte eine Okklusion der Arteria cerebri media mit einem TICI-Score von 0.
 
 Nach der mechanischen Thrombektomie durch Dr. Weber konnte eine vollständige Reperfusion erreicht werden, was einem TICI-Score von 3 entspricht. Die Behandlung erfolgte unter der Leitung von Prof. Müller in der neurointensiven Abteilung.
 
 Der Patient Hans Meier zeigte nach dem Eingriff deutliche Verbesserungen. Die Kontroll-Bildgebung bestätigte den Behandlungserfolg mit TICI 2b. Die Nachsorge wird in der Neurologischen Klinik Hamburg fortgesetzt.`;
 
 // Minimal entity set for sample demo
-export const DEFAULT_ENTITIES = [
+export const DEFAULT_ENTITIES: Entity[] = [
   { 
     id: 'person', 
     label: 'PERSON', 
@@ -35,7 +50,7 @@ export const DEFAULT_ENTITIES = [
 ];
 
 // Sample annotations for UI demo
-export const SAMPLE_ANNOTATIONS = [
+export const SAMPLE_ANNOTATIONS: Annotation[] = [
   {
     id: '1',
     start: 12,

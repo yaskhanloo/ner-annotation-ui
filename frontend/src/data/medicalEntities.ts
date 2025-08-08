@@ -1,5 +1,19 @@
 // Enhanced medical entity types for German stroke intervention reports
-export const MEDICAL_ENTITIES = [
+export interface MedicalEntity {
+  id: string;
+  label: string;
+  color: string;
+  description: string;
+}
+
+export interface AnnotationSample {
+  text: string;
+  entity: string;
+  start: number;
+  end: number;
+}
+
+export const MEDICAL_ENTITIES: MedicalEntity[] = [
   {
     id: 'person',
     label: 'PERSON',
@@ -92,7 +106,7 @@ export const MEDICAL_ENTITIES = [
   }
 ];
 
-export const MEDICAL_ANNOTATION_SAMPLES = [
+export const MEDICAL_ANNOTATION_SAMPLES: AnnotationSample[] = [
   {
     text: 'Dr. Piechowiak',
     entity: 'person',
