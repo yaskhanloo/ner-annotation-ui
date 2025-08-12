@@ -1,6 +1,15 @@
 # Medical NER Annotation UI
 
-A production-ready hybrid web application for Named Entity Recognition (NER) annotation of German medical documents, specifically optimized for stroke intervention reports. Features a guided 3-step workflow with Material-UI stepper interface.
+A production-ready hybrid web application for Named Entity Recognition (NER) annotation of German medical documents, specifically optimized for stroke intervention reports. Features a guided 3-step workflow with Material-UI stepper interface and AI-powered pre-annotation.
+
+## ✨ New Features (v2.0)
+
+- **🤖 AI Pre-annotation**: Intelligent suggestions for medical entities using pattern matching
+- **🛡️ Error Boundaries**: Robust error handling with graceful fallbacks  
+- **⚡ Performance Optimizations**: Memoized components and efficient re-renders
+- **🎨 Enhanced UI**: Improved Material-UI components with better UX
+- **📊 Confidence Scoring**: AI suggestions with confidence levels
+- **🔧 Better Backend**: Improved error handling, validation, and timeouts
 
 ## Technical Architecture
 
@@ -68,6 +77,16 @@ Optimized for German stroke intervention reports:
 
 ## Quick Start
 
+### 🐳 Docker (Recommended)
+```bash
+# Start with Docker Compose
+docker-compose up -d
+
+# Access at http://localhost:3001
+# View logs: docker-compose logs -f
+```
+
+### 💻 Local Development
 **Prerequisites**
 ```bash
 node -v        # v16+ required
@@ -157,10 +176,61 @@ curl http://localhost:3001/api/health
 python3 -c "import pdfplumber; print('OK')"
 ```
 
+## Testing
+
+**Automated Testing**
+```bash
+# Start backend first
+npm run dev:backend
+
+# In another terminal, run tests
+node test-app.js
+```
+
+**Manual Testing Checklist**
+- [ ] Backend health check responds
+- [ ] PDF upload and parsing works
+- [ ] Text selection and annotation works
+- [ ] AI pre-annotation generates suggestions
+- [ ] Entity labeling with keyboard shortcuts
+- [ ] Export functionality works
+- [ ] Error handling displays properly
+
+**Test with Sample Data**
+The app includes sample medical text for testing. Use the "Use Sample Text" button in Step 1.
+
+## Performance Optimizations
+
+- **React.memo()** on expensive components
+- **useCallback()** for event handlers
+- **useMemo()** for computed values
+- **Debounced text selection** (300ms)
+- **Chunked processing** for large documents
+- **Lazy loading** for export formats
+
+## 🐳 Docker Deployment
+
+### Quick Commands
+```bash
+# Development
+npm run compose:up      # Start with docker-compose
+npm run compose:down    # Stop containers
+npm run compose:logs    # View logs
+
+# Production
+npm run docker:build   # Build Docker image
+npm run docker:run     # Run container
+npm run docker:stop    # Stop and remove container
+```
+
+### Production Deployment
+See [DOCKER_README.md](./DOCKER_README.md) for detailed Docker deployment instructions.
+
 ## Support
 
 For technical issues, verify:
-1. Backend server running on port 3001
-2. Frontend accessible on port 3000  
-3. Python dependencies installed
-4. PDF files are valid and readable
+1. **Docker**: `docker-compose logs` for container issues
+2. **Local**: Backend server running on port 3001
+3. **Local**: Frontend accessible on port 3000  
+4. Python dependencies installed
+5. PDF files are valid and readable

@@ -1,0 +1,7 @@
+{
+    "kiroAgent.configureMCP": "Disabled",
+    "typescript.validate.enable": false,
+    "javascript.validate.enable": true,
+    "js/ts.implicitProjectConfig.checkJs": false,
+    "typescript.preferences.includePackageJsonAutoImports": "off"
+}

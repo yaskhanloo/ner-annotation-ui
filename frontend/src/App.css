@@ -1,48 +1,7 @@
 /* ---- Layout ---- */
-.app-shell {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 280px 1fr 360px; /* sidebar | editor | panel */
-  grid-template-areas:
-    "toolbar toolbar toolbar"
-    "sidebar editor panel";
-  height: 100vh;
-}
-
-/* Top toolbar (filters, actions) */
-.app-toolbar {
-  grid-area: toolbar;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  background: var(--mui-palette-background-paper, #fff);
-}
-
-/* Left: entities / files */
-.app-sidebar {
-  grid-area: sidebar;
-  overflow: auto;
-  padding: 12px;
-  border-right: 1px solid rgba(0,0,0,0.08);
-  background: var(--mui-palette-background-default, #fafafa);
-}
-
-/* Center: text viewer/editor */
-.app-editor {
-  grid-area: editor;
-  overflow: auto;
-  padding: 16px 20px;
-}
-
-/* Right: annotations list / details */
-.app-panel {
-  grid-area: panel;
-  overflow: auto;
-  padding: 12px 12px 20px;
-  border-left: 1px solid rgba(0,0,0,0.08);
-  background: var(--mui-palette-background-paper, #fff);
+body {
+  margin: 0;
+  padding: 0;
 }
 
 /* ---- Text & selection ---- */
@@ -102,33 +61,10 @@
 .ann-item__text { font-size: 13px; color: rgba(0,0,0,0.8); }
 .ann-item__meta { font-size: 11px; color: rgba(0,0,0,0.55); }
 
-/* ---- Status badge ---- */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  border: 1px solid rgba(0,0,0,.08);
-}
-.status--ok    { background: #e8f5e9; color: #2e7d32; }
-.status--down  { background: #ffebee; color: #c62828; }
-.status--check { background: #fff8e1; color: #ef6c00; }
+/* Status badge styles removed - now using Material-UI Chip */
 
 /* ---- Utility ---- */
 .scroll-y { overflow-y: auto; }
 .mono     { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 .muted    { color: rgba(0,0,0,0.55); }
 
-/* ---- Responsive tweak ---- */
-@media (max-width: 1200px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "toolbar"
-      "editor"
-      "sidebar"
-      "panel";
-  }
-}
