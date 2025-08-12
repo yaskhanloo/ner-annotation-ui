@@ -1,29 +1,20 @@
+# NER Annotation Tool - Docker Compose Configuration
+# Simple single-service setup for the annotation tool
+
 services:
   ner-annotation:
-    build: .
+    build: .                    # Build from local Dockerfile
     ports:
-      - "3001:3001"
+      - "3001:3001"            # Expose on port 3001
     environment:
-      - NODE_ENV=production
-      - PORT=3001
-    # volumes:
-      # Optional: persist uploads (uncomment if needed)
-      # - ./uploads:/app/backend/uploads
-    restart: unless-stopped
+      - NODE_ENV=production    # Production mode
+      - PORT=3001             # Internal port
+    restart: unless-stopped    # Auto-restart on failure
+    
+    # Health check to monitor container status
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  # Optional: Add a reverse proxy (uncomment if needed)
-  # nginx:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
-  #   depends_on:
-  #     - ner-annotation
-  #   restart: unless-stopped

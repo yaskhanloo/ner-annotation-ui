@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """
-Enhanced PDF Parser for Medical NER Annotation UI
-Extracts and preprocesses text content from PDF files using pdfplumber
+PDF Text Extraction for NER Annotation Tool
+
+Simple Python script that extracts text from PDF files using pdfplumber.
+Called by the Node.js backend as a subprocess.
+
+Usage: python3 pdf_parser.py <input.pdf>
+Output: JSON with extracted text and metadata
 """
 
 import sys
@@ -13,21 +18,27 @@ from typing import Dict
 
 def preprocess_medical_text(text: str) -> str:
     """
-    Preprocess extracted text for better medical NER annotation
+    Clean up extracted text for better medical annotation
+    
+    Fixes common PDF extraction issues:
+    - Broken medical terms (e.g., "T hrombektomie" -> "Thrombektomie")
+    - Dosage formatting (e.g., "5 mg" -> "5mg")
+    - Spaced abbreviations (e.g., "T I C I" -> "TICI")
+    - Decimal numbers (e.g., "3 . 5" -> "3.5")
     """
-    # Fix broken medical terms
+    # Fix broken medical terms (capital letter + space + lowercase)
     text = re.sub(r'\b([A-Z])\s+([a-z]+)\b', r'\1\2', text)
 
-    # Fix dosage formatting
+    # Fix dosage formatting (number + space + unit)
     text = re.sub(r'(\d+)\s*(mg|ml|g|mcg|units?)\b', r'\1\2', text)
 
-    # Fix spaced-out abbreviations like "T I C I"
+    # Fix spaced-out abbreviations like "T I C I" -> "TICI"
     text = re.sub(r'\b([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\b', r'\1\2\3\4', text)
 
-    # Preserve score formats
+    # Preserve medical score formats (e.g., "NIHSS 15")
     text = re.sub(r'\b([A-Z]{2,})\s+(\d+[a-z]?)\b', r'\1 \2', text)
 
-    # Fix broken decimal numbers
+    # Fix broken decimal numbers (e.g., "3 . 5" -> "3.5")
     text = re.sub(r'(\d+)\s+\.\s+(\d+)', r'\1.\2', text)
 
     # Fix punctuation spacing

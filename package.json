@@ -7,18 +7,8 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
-    "start:backend": "npm --prefix backend run build && npm --prefix backend start",
-    "start:frontend": "npm --prefix frontend run build && npm --prefix frontend run preview",
     "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
-    "build": "npm --prefix backend run build && npm --prefix frontend run build",
-    "docker:build": "docker build -t ner-annotation-tool .",
-    "docker:run": "docker run -d --name ner-annotation -p 3001:3001 ner-annotation-tool",
-    "docker:stop": "docker stop ner-annotation && docker rm ner-annotation",
-    "docker:logs": "docker logs -f ner-annotation",
-    "compose:up": "docker-compose up -d",
-    "compose:down": "docker-compose down",
-    "compose:logs": "docker-compose logs -f"
+    "build": "npm --prefix frontend run build"
   },
   "keywords": [
     "ner",

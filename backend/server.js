@@ -1,3 +1,12 @@
+/**
+ * NER Annotation Tool - Backend Server
+ * 
+ * Express.js API server:
+ * - Handles PDF uploads → calls Python script for text extraction
+ * - Stores annotations in memory (replace with DB for production)
+ * - Serves React frontend in production mode
+ */
+
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
@@ -7,27 +16,35 @@ import fs from 'fs';
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 
+// ES module compatibility for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables
 config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// ============================================================================
+// MIDDLEWARE SETUP
+// ============================================================================
+
+// Enable CORS for frontend communication
 app.use(cors());
+// Parse JSON request bodies
 app.use(express.json());
 
-// Serve static files in production
+// Serve React frontend in production mode
 if (process.env.NODE_ENV === 'production') {
   const publicPath = path.join(__dirname, 'public');
   app.use(express.static(publicPath));
 }
 
-// Configure multer for file uploads
+// Configure file upload handling (PDF files only, 10MB limit)
 const upload = multer({
   dest: 'uploads/',
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
@@ -37,19 +54,31 @@ const upload = multer({
   }
 });
 
-// Ensure uploads directory exists
+// Create uploads directory if it doesn't exist
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-// Routes
+// ============================================================================
+// API ROUTES
+// ============================================================================
 
-// Health check
+/**
+ * Health Check Endpoint
+ * GET /api/health
+ * Returns server status for monitoring
+ */
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
-// Upload and parse PDF with improved error handling and validation
+/**
+ * PDF Upload and Text Extraction Endpoint
+ * POST /api/upload-pdf
+ * 
+ * Accepts PDF file, extracts text using Python pdfplumber,
+ * returns extracted text with metadata
+ */
 app.post('/api/upload-pdf', upload.single('pdf'), async (req, res) => {
   let filePath = null;
 
@@ -206,7 +235,12 @@ app.post('/api/upload-pdf', upload.single('pdf'), async (req, res) => {
   }
 });
 
-// Get annotations for a document
+/**
+ * Annotation Storage Endpoints
+ * In-memory storage for MVP (replace with database for production)
+ */
+
+// Get saved annotations for a document
 app.get('/api/annotations/:documentId', (req, res) => {
   // TODO: Implement database storage
   res.json({ annotations: [] });
@@ -219,27 +253,39 @@ app.post('/api/annotations/:documentId', (req, res) => {
   res.json({ success: true, message: 'Annotations saved' });
 });
 
-// Get entity types
+/**
+ * Entity Management Endpoints
+ * Manage custom entity types
+ */
+
+// Get available entity types
 app.get('/api/entities', (req, res) => {
   // TODO: Implement database storage
   res.json({ entities: [] });
 });
 
-// Create new entity type
+// Create new custom entity type
 app.post('/api/entities', (req, res) => {
   const { label, description, color } = req.body;
   // TODO: Implement database storage
   res.json({ success: true, entityId: Date.now().toString() });
 });
 
-// Export annotations
+/**
+ * Export Endpoint
+ * Export annotations in various formats
+ */
 app.get('/api/export/:documentId/:format', (req, res) => {
   const { documentId, format } = req.params;
-  // TODO: Implement export functionality
+  // TODO: Implement export functionality (JSON, CoNLL, spaCy)
   res.json({ success: true, format, documentId });
 });
 
-// Serve index.html for all non-API routes (must be after API routes)
+// ============================================================================
+// PRODUCTION FRONTEND SERVING & SERVER STARTUP
+// ============================================================================
+
+// Serve React frontend for all non-API routes (SPA routing)
 if (process.env.NODE_ENV === 'production') {
   const publicPath = path.join(__dirname, 'public');
   app.get('*', (req, res) => {
@@ -247,6 +293,8 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 NER Annotation Server running on port ${PORT}`);
+  console.log(`📱 Access the app at: http://localhost:${PORT}`);
 });

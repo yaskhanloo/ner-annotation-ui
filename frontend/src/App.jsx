@@ -1,3 +1,12 @@
+/**
+ * NER Annotation Tool - Main React App
+ * 
+ * Simple 3-step workflow:
+ * 1. Upload PDF → Extract text
+ * 2. Select text → Assign entity labels  
+ * 3. Export → Download JSON annotations
+ */
+
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Box, AppBar, Toolbar, Typography, Chip } from '@mui/material';
 import StepperWorkflow from './components/StepperWorkflow';
@@ -5,11 +14,12 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { useAnnotationState } from './hooks/useAnnotationState';
 import './App.css';
 
+// Material-UI theme configuration
 const theme = createTheme({
   palette: {
-    primary: { main: '#1976d2' },
-    secondary: { main: '#dc004e' },
-    background: { default: '#f5f5f5' },
+    primary: { main: '#1976d2' },    // Blue primary color
+    secondary: { main: '#dc004e' },  // Red secondary color
+    background: { default: '#f5f5f5' }, // Light gray background
   },
   typography: {
     fontFamily: [
@@ -20,23 +30,25 @@ const theme = createTheme({
 });
 
 function App() {
+  // Get all annotation state and handlers from custom hook
   const {
-    text,
-    setText,
-    entities,
-    annotations,
-    setAnnotations,
-    selectedText,
-    setSelectedText,
-    onEntitySelect,
-    onAnnotationRemove,
-    onPdfTextExtracted,
-    customText,
-    setCustomText,
-    handleTextChange,
-    backendStatus,
+    text,                    // Current document text
+    setText,                 // Update document text
+    entities,               // Available entity types (PERSON, PROCEDURE, etc.)
+    annotations,            // Current annotations array
+    setAnnotations,         // Update annotations
+    selectedText,           // Currently selected text span
+    setSelectedText,        // Update selected text
+    onEntitySelect,         // Handle entity assignment to selected text
+    onAnnotationRemove,     // Remove an annotation
+    onPdfTextExtracted,     // Handle PDF text extraction
+    customText,             // Custom text input
+    setCustomText,          // Update custom text
+    handleTextChange,       // Handle text changes
+    backendStatus,          // Backend connection status
   } = useAnnotationState();
 
+  // Helper function to get status chip color
   const getStatusColor = () => {
     switch (backendStatus) {
       case 'connected': return 'success';
@@ -45,6 +57,7 @@ function App() {
     }
   };
 
+  // Helper function to get status display text
   const getStatusText = () => {
     switch (backendStatus) {
       case 'connected': return 'Connected';
