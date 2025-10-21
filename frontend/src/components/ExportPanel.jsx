@@ -1,22 +1,21 @@
-import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Paper, 
-  Grid, 
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Grid,
   Chip,
   Alert
 } from '@mui/material';
-import { 
-  Download, 
-  Assessment, 
-  Code, 
-  DataObject 
+import {
+  Download,
+  Assessment,
+  Code,
+  DataObject
 } from '@mui/icons-material';
 
 const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
-  
+
   // Helper function to generate filename with original name, export format, and timestamp
   const generateFilename = (exportFormat, extension) => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19); // Format: YYYY-MM-DDTHH-MM-SS
@@ -48,7 +47,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
         };
       })
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -79,7 +78,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
         })
       }]
     };
-    
+
     const blob = new Blob([JSON.stringify(spacyFormat, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -93,31 +92,31 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
     const tokens = text.split(/\s+/);
     let charIndex = 0;
     const tokenData = [];
-    
+
     tokens.forEach((token) => {
       const start = text.indexOf(token, charIndex);
       const end = start + token.length;
-      
+
       let label = 'O';
-      
+
       annotations.forEach(annotation => {
         if (start >= annotation.start && end <= annotation.end) {
           const entity = entities.find(e => e.id === annotation.entity);
           const entityLabel = entity?.label || annotation.entity;
-          
+
           const isFirstToken = start === annotation.start;
           label = isFirstToken ? `B-${entityLabel}` : `I-${entityLabel}`;
         }
       });
-      
+
       tokenData.push({
         token: token,
         label: label
       });
-      
+
       charIndex = end;
     });
-    
+
     const hfFormat = {
       data: [{
         tokens: tokenData.map(t => t.token),
@@ -136,7 +135,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
         original_filename: originalFilename
       }
     };
-    
+
     const blob = new Blob([JSON.stringify(hfFormat, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -150,7 +149,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
     const tokens = text.split(/\s+/);
     let charIndex = 0;
     const tokenPositions = [];
-    
+
     tokens.forEach((token, i) => {
       const start = text.indexOf(token, charIndex);
       const end = start + token.length;
@@ -159,15 +158,15 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
     });
 
     const bioTags = new Array(tokens.length).fill('O');
-    
+
     annotations.forEach(annotation => {
       const entity = entities.find(e => e.id === annotation.entity);
       const entityLabel = entity?.label || annotation.entity;
-      
-      const affectedTokens = tokenPositions.filter(tp => 
+
+      const affectedTokens = tokenPositions.filter(tp =>
         tp.start >= annotation.start && tp.end <= annotation.end
       );
-      
+
       affectedTokens.forEach((tp, i) => {
         if (i === 0) {
           bioTags[tp.index] = `B-${entityLabel}`;
@@ -179,7 +178,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
 
     const conllLines = tokens.map((token, i) => `${token}\t${bioTags[i]}`);
     const conllText = conllLines.join('\n');
-    
+
     const blob = new Blob([conllText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -207,7 +206,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
         <Assessment />
         Export & Statistics
       </Typography>
-      
+
       <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
         <Typography variant="subtitle1" gutterBottom>Statistics</Typography>
         <Box sx={{ mb: 2 }}>
@@ -218,7 +217,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
             <strong>Text length:</strong> {text.length.toLocaleString()} characters
           </Typography>
         </Box>
-        
+
         {Object.keys(stats).length > 0 && (
           <Box>
             <Typography variant="body2" sx={{ mb: 1 }}>
@@ -242,7 +241,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
       <Typography variant="subtitle1" gutterBottom>
         Download Annotations
       </Typography>
-      
+
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <Button
@@ -257,7 +256,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
             Export as Enhanced JSON
           </Button>
         </Grid>
-        
+
         <Grid item xs={12} sm={6}>
           <Button
             fullWidth
@@ -271,7 +270,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
             Export for spaCy Training
           </Button>
         </Grid>
-        
+
         <Grid item xs={12} sm={6}>
           <Button
             fullWidth
@@ -285,13 +284,13 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
             Export as CoNLL-2003 Format
           </Button>
         </Grid>
-        
+
         <Grid item xs={12} sm={6}>
           <Button
             fullWidth
             variant="contained"
-            sx={{ 
-              bgcolor: '#FFD700', 
+            sx={{
+              bgcolor: '#FFD700',
               color: 'black',
               '&:hover': { bgcolor: '#FFC107' },
               py: 1.5
@@ -304,7 +303,7 @@ const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
           </Button>
         </Grid>
       </Grid>
-      
+
       {annotations.length === 0 && (
         <Alert severity="info" sx={{ mt: 2 }}>
           Add some annotations to enable export options
