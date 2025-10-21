@@ -1,10 +1,10 @@
 # NER Annotation Tool
 
-A simple web application for annotating medical entities in German documents. Upload PDFs, select text, assign entity labels, and export as JSON.
+A web application for annotating thrombectomy-specific medical entities in German documents. Upload PDFs, select text, assign entity labels, and export annotations as JSON.
 
 ## Quick Start
 
-### 🐳 Docker (Recommended)
+### Docker (Recommended)
 ```bash
 # One-click deployment
 ./deploy.sh
@@ -14,7 +14,7 @@ docker-compose up -d
 ```
 Access at: http://localhost:3001
 
-### 💻 Local Development
+### Local Development
 ```bash
 # Setup environment variables
 cp .env.example .env
@@ -33,50 +33,66 @@ npm run dev
 
 ## How to Use
 
-1. **Upload PDF** - Drag & drop a medical document
+1. **Upload PDF** - Drag and drop a medical document
 2. **Select Text** - Click and drag to select text
-3. **Assign Entity** - Choose from 15 medical entity types
+3. **Assign Entity** - Choose from 18 thrombectomy-specific entity types
 4. **Export JSON** - Download your annotations
 
-## Medical Entity Types
+## Thrombectomy Entity Types
 
-| Entity | Example |
-|--------|---------|
-| PERSON | Dr. Smith |
-| PROCEDURE | Thrombektomie |
-| DEVICE | Solitaire Stent |
-| VESSEL | ICA links |
-| DIAGNOSIS | Stenose |
-| MEDICAL_SCORE | TICI 2c |
-| MEDICATION | rtPA |
-| DOSAGE | 0.9mg/kg |
-| TIME | 90 Minuten |
-| DATETIME | 02.12.2024 12:42 |
+| Entity | Description | Example |
+|--------|-------------|---------|
+| ANAESTHESIA | Type of anesthesia or sedation | Intubationsnarkose, Propofol |
+| ASPIRATION_CATHETER | Aspiration catheters and usage | RED 68, RED 72 |
+| COMPLICATIONS | Complications during intervention | Dissektion, Blutung |
+| INTERVENTION_TIMING | Timings of intervention steps | Puncture-to-reperfusion times |
+| EXTRACRANIAL_PTA | Extracranial percutaneous transluminal angioplasty | - |
+| INTRACRANIAL_PTA | Intracranial percutaneous transluminal angioplasty | - |
+| GUIDE_CATHETER | Guide catheters | Cerebase, Emboguard |
+| MICROCATHETER | Microcatheters | Trevo Trak 21 |
+| RECANALIZATION_ATTEMPTS | Number of attempts/manoeuvres | - |
+| ANTIPLATELET_THERAPY | Antiplatelet treatments | Aspirin, Integrilin |
+| THROMBOLYSIS | Thrombolysis administration | rtPA, Tenekteplase |
+| SPASMOLYTIC_MEDICATION | Spasmolytic medication usage | - |
+| OCCLUSION_SITE | Site of vessel occlusion | ICA, M1, Tandemverschluss |
+| CERVICAL_STENOSES | Cervical stenoses findings | - |
+| STENT_RETRIEVER | Stent retrievers | Solitaire 6x40mm |
+| TICI_SCORE | TICI reperfusion score | TICI 2c, TICI 3 |
+| TECHNIQUE_FIRST_MANEUVER | Technique used in first maneuver | Stent-retriever, Pinning |
+| VESSEL_VISUALIZATION | Vessel visualization during procedure | - |
 
 ## Project Structure
 
 ```
 ner-annotation-ui/
-├── frontend/                    # React app
+├── frontend/                    # React + Vite frontend
 │   ├── src/
 │   │   ├── components/         # React components
 │   │   ├── hooks/             # Custom React hooks
-│   │   ├── services/          # API services
+│   │   ├── services/          # API communication services
 │   │   ├── utils/             # Utility functions
 │   │   ├── constants/         # Application constants
-│   │   └── data/              # Static data
+│   │   ├── data/              # Medical entities and sample data
+│   │   ├── App.jsx            # Main application component
+│   │   └── main.jsx           # Application entry point
+│   ├── public/                # Static assets
+│   ├── package.json           # Frontend dependencies
 │   └── .env.example           # Frontend environment template
-├── backend/                    # Express API + Python PDF parser
+├── backend/                    # Express.js API + Python PDF parser
 │   ├── config/                # Configuration management
 │   ├── routes/                # API route handlers
 │   ├── services/              # Business logic services
-│   ├── utils/                 # Utility functions
-│   ├── server.js              # Main server file
-│   ├── pdf_parser.py          # Python PDF processing
+│   ├── utils/                 # Utility functions and logging
+│   ├── uploads/               # PDF upload directory
+│   ├── server.js              # Express server entry point
+│   ├── pdf_parser.py          # Python PDF text extraction
+│   ├── requirements.txt       # Python dependencies
+│   ├── package.json           # Backend dependencies
 │   └── .env.example           # Backend environment template
-├── Dockerfile                 # Container build
+├── Dockerfile                 # Multi-stage container build
 ├── docker-compose.yml         # Container orchestration
-├── deploy.sh                  # One-click deployment
+├── deploy.sh                  # One-click deployment script
+├── package.json               # Root package with dev scripts
 └── .env.example               # Root environment template
 ```
 
@@ -96,10 +112,13 @@ npm run dev:frontend   # Frontend only
 
 ## API Endpoints
 
-- `GET /api/health` - Health check
-- `POST /api/upload-pdf` - Upload PDF
-- `POST /api/annotations/:id` - Save annotations
-- `GET /api/export/:id` - Export JSON
+- `GET /api/health` - Health check and server status
+- `POST /api/upload-pdf` - Upload PDF and extract text
+- `GET /api/annotations/:documentId` - Get saved annotations
+- `POST /api/annotations/:documentId` - Save annotations
+- `GET /api/entities` - Get available entity types
+- `POST /api/entities` - Create custom entity type
+- `GET /api/export/:documentId/:format` - Export annotations
 
 ## Troubleshooting
 
