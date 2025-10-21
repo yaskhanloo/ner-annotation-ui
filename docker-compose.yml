@@ -5,15 +5,21 @@ services:
   ner-annotation:
     build: .                    # Build from local Dockerfile
     ports:
-      - "3001:3001"            # Expose on port 3001
+      - "${PORT:-3001}:${PORT:-3001}"  # Expose on configurable port
     environment:
       - NODE_ENV=production    # Production mode
-      - PORT=3001             # Internal port
+      - PORT=${PORT:-3001}     # Internal port
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10485760}
+      - PDF_PROCESSING_TIMEOUT=${PDF_PROCESSING_TIMEOUT:-30000}
+      - PYTHON_CMD=${PYTHON_CMD:-python3}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    env_file:
+      - .env                   # Load environment variables from .env file
     restart: unless-stopped    # Auto-restart on failure
     
     # Health check to monitor container status
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT:-3001}/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

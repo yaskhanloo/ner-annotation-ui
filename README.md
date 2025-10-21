@@ -16,6 +16,11 @@ Access at: http://localhost:3001
 
 ### 💻 Local Development
 ```bash
+# Setup environment variables
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
+
 # Install dependencies
 npm run install:all
 pip install -r backend/requirements.txt
@@ -52,11 +57,27 @@ npm run dev
 
 ```
 ner-annotation-ui/
-├── frontend/          # React app
-├── backend/           # Express API + Python PDF parser
-├── Dockerfile         # Container build
-├── docker-compose.yml # Container orchestration
-└── deploy.sh          # One-click deployment
+├── frontend/                    # React app
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── services/          # API services
+│   │   ├── utils/             # Utility functions
+│   │   ├── constants/         # Application constants
+│   │   └── data/              # Static data
+│   └── .env.example           # Frontend environment template
+├── backend/                    # Express API + Python PDF parser
+│   ├── config/                # Configuration management
+│   ├── routes/                # API route handlers
+│   ├── services/              # Business logic services
+│   ├── utils/                 # Utility functions
+│   ├── server.js              # Main server file
+│   ├── pdf_parser.py          # Python PDF processing
+│   └── .env.example           # Backend environment template
+├── Dockerfile                 # Container build
+├── docker-compose.yml         # Container orchestration
+├── deploy.sh                  # One-click deployment
+└── .env.example               # Root environment template
 ```
 
 ## Commands

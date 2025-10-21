@@ -1,4 +1,19 @@
 import React from 'react';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Paper, 
+  Grid, 
+  Chip,
+  Alert
+} from '@mui/material';
+import { 
+  Download, 
+  Assessment, 
+  Code, 
+  DataObject 
+} from '@mui/icons-material';
 
 const ExportPanel = ({ annotations, text, entities }) => {
   const exportAsJSON = () => {
@@ -181,110 +196,115 @@ const ExportPanel = ({ annotations, text, entities }) => {
   const stats = getStats();
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-      <h3>📊 Export & Statistics</h3>
+    <Paper sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
+      <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Assessment />
+        Export & Statistics
+      </Typography>
       
-      <div style={{ marginBottom: '20px' }}>
-        <h4>Statistics</h4>
-        <div style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
-          <div><strong>Total annotations:</strong> {annotations.length}</div>
-          <div><strong>Text length:</strong> {text.length} characters</div>
-          <div style={{ marginTop: '10px' }}>
-            <strong>By entity type:</strong>
-            {Object.entries(stats).map(([entityLabel, count]) => (
-              <div key={entityLabel} style={{ marginLeft: '10px' }}>
-                <span 
-                  style={{ 
-                    backgroundColor: '#007bff', 
-                    color: 'white', 
-                    padding: '2px 6px', 
-                    borderRadius: '3px',
-                    fontSize: '12px',
-                    marginRight: '8px'
-                  }}
-                >
-                  {entityLabel}
-                </span>
-                {count} annotation{count !== 1 ? 's' : ''}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
+        <Typography variant="subtitle1" gutterBottom>Statistics</Typography>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2">
+            <strong>Total annotations:</strong> {annotations.length}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Text length:</strong> {text.length.toLocaleString()} characters
+          </Typography>
+        </Box>
+        
+        {Object.keys(stats).length > 0 && (
+          <Box>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              <strong>By entity type:</strong>
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {Object.entries(stats).map(([entityLabel, count]) => (
+                <Chip
+                  key={entityLabel}
+                  label={`${entityLabel}: ${count}`}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
+      </Paper>
 
-      <div style={{ display: 'grid', gap: '10px' }}>
-        <button
-          onClick={exportAsJSON}
-          disabled={annotations.length === 0}
-          style={{
-            padding: '12px',
-            backgroundColor: annotations.length > 0 ? '#4CAF50' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: annotations.length > 0 ? 'pointer' : 'not-allowed'
-          }}
-        >
-          📄 Export as Enhanced JSON
-        </button>
+      <Typography variant="subtitle1" gutterBottom>
+        Download Annotations
+      </Typography>
+      
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="success"
+            startIcon={<Download />}
+            onClick={exportAsJSON}
+            disabled={annotations.length === 0}
+            sx={{ py: 1.5 }}
+          >
+            Export as Enhanced JSON
+          </Button>
+        </Grid>
         
-        <button
-          onClick={exportAsSpacy}
-          disabled={annotations.length === 0}
-          style={{
-            padding: '12px',
-            backgroundColor: annotations.length > 0 ? '#2196F3' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: annotations.length > 0 ? 'pointer' : 'not-allowed'
-          }}
-        >
-          🐍 Export for spaCy Training
-        </button>
+        <Grid item xs={12} sm={6}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            startIcon={<Code />}
+            onClick={exportAsSpacy}
+            disabled={annotations.length === 0}
+            sx={{ py: 1.5 }}
+          >
+            Export for spaCy Training
+          </Button>
+        </Grid>
         
-        <button
-          onClick={exportAsCoNLL}
-          disabled={annotations.length === 0}
-          style={{
-            padding: '12px',
-            backgroundColor: annotations.length > 0 ? '#FF9800' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: annotations.length > 0 ? 'pointer' : 'not-allowed'
-          }}
-        >
-          📊 Export as CoNLL-2003 Format
-        </button>
+        <Grid item xs={12} sm={6}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="warning"
+            startIcon={<DataObject />}
+            onClick={exportAsCoNLL}
+            disabled={annotations.length === 0}
+            sx={{ py: 1.5 }}
+          >
+            Export as CoNLL-2003 Format
+          </Button>
+        </Grid>
         
-        <button
-          onClick={exportForHuggingFace}
-          disabled={annotations.length === 0}
-          style={{
-            padding: '12px',
-            backgroundColor: annotations.length > 0 ? '#FFD700' : '#ccc',
-            color: 'black',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: annotations.length > 0 ? 'pointer' : 'not-allowed'
-          }}
-        >
-          🤗 Export for Hugging Face
-        </button>
-      </div>
+        <Grid item xs={12} sm={6}>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ 
+              bgcolor: '#FFD700', 
+              color: 'black',
+              '&:hover': { bgcolor: '#FFC107' },
+              py: 1.5
+            }}
+            startIcon={<Download />}
+            onClick={exportForHuggingFace}
+            disabled={annotations.length === 0}
+          >
+            Export for Hugging Face
+          </Button>
+        </Grid>
+      </Grid>
       
       {annotations.length === 0 && (
-        <p style={{ 
-          marginTop: '10px', 
-          color: '#666', 
-          fontStyle: 'italic',
-          fontSize: '14px'
-        }}>
+        <Alert severity="info" sx={{ mt: 2 }}>
           Add some annotations to enable export options
-        </p>
+        </Alert>
       )}
-    </div>
+    </Paper>
   );
 };
 

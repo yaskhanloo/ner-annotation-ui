@@ -80,11 +80,14 @@ const TextDisplay = ({ text, annotations, onSelection, entities }) => {
         onSelection(selectionData);
       } else {
         // The extracted text doesn't match - this can happen with complex DOM structures
-        console.log('Position mismatch:', {
-          calculated: { startPos, endPos },
-          extractedText,
-          selectedText
-        });
+        // Position mismatch - this can happen with complex DOM structures
+        if (import.meta.env.DEV) {
+          console.debug('Position mismatch:', {
+            calculated: { startPos, endPos },
+            extractedText,
+            selectedText
+          });
+        }
         // Fallback: search for the text in the original, but try to find the right occurrence
         // by looking at the approximate position where the user clicked
         const allOccurrences = [];
@@ -127,12 +130,14 @@ const TextDisplay = ({ text, annotations, onSelection, entities }) => {
             text: selectedText
           };
 
-          console.log('Using fallback selection:', {
-            selectedText,
-            allOccurrences,
-            bestMatch,
-            calculatedPos: startPos
-          });
+          if (import.meta.env.DEV) {
+            console.debug('Using fallback selection:', {
+              selectedText,
+              allOccurrences,
+              bestMatch,
+              calculatedPos: startPos
+            });
+          }
 
           setSelection(selectionData);
           onSelection(selectionData);

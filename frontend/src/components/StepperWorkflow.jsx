@@ -38,11 +38,29 @@ const StepperWorkflow = ({
         : activeStep + 1;
     setActiveStep(newActiveStep);
   };
+  
   const handleBack = () => setActiveStep(p => p - 1);
+  
   const handleStep = (step) => () => setActiveStep(step);
-  const handleComplete = () => { setCompleted(p => ({ ...p, [activeStep]: true })); handleNext(); };
+  
+  const handleComplete = () => { 
+    // Mark current step as completed
+    setCompleted(p => ({ ...p, [activeStep]: true })); 
+    
+    // Only advance to next step if not on the last step
+    if (!isLastStep()) {
+      handleNext();
+    }
+    // If on last step, stay there - the ExportStep component handles the completion actions
+  };
+  
   const handleReset = () => {
-    setActiveStep(0); setCompleted({}); setAnnotations([]); setSelectedText(null); setText(''); setCustomText('');
+    setActiveStep(0); 
+    setCompleted({}); 
+    setAnnotations([]); 
+    setSelectedText(null); 
+    setText(''); 
+    setCustomText('');
   };
 
   const isStepValid = (step) => {
@@ -129,7 +147,7 @@ const StepperWorkflow = ({
             variant="contained"
             disabled={!isStepValid(activeStep)}
           >
-            {isLastStep() ? 'Finish' : 'Next'}
+            {isLastStep() ? (completed[activeStep] ? 'Complete' : 'Finish') : 'Next'}
           </Button>
         </Box>
       </Paper>

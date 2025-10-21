@@ -1,73 +1,14 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import { 
+  Box, 
+  Button, 
+  Typography, 
+  Alert, 
+  Paper,
+  CircularProgress
+} from '@mui/material';
+import { CloudUpload } from '@mui/icons-material';
 import { apiService } from '../services/api';
-
-const UploaderContainer = styled.div`
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  padding: 2rem;
-  text-align: center;
-  margin: 1rem 0;
-  background: #f9f9f9;
-  transition: border-color 0.3s ease;
-
-  &:hover {
-    border-color: #007bff;
-  }
-
-  &.dragover {
-    border-color: #007bff;
-    background: #e3f2fd;
-  }
-`;
-
-const FileInput = styled.input`
-  display: none;
-`;
-
-const UploadButton = styled.button`
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin: 0.5rem;
-
-  &:hover {
-    background: #0056b3;
-  }
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const StatusMessage = styled.div`
-  margin: 1rem 0;
-  padding: 0.75rem;
-  border-radius: 4px;
-  
-  &.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-  
-  &.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-  
-  &.info {
-    background: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-  }
-`;
 
 const PdfUploader = ({ onTextExtracted }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -135,38 +76,64 @@ const PdfUploader = ({ onTextExtracted }) => {
   };
 
   return (
-    <div>
-      <UploaderContainer
-        className={dragOver ? 'dragover' : ''}
+    <Box>
+      <Paper
+        sx={{
+          border: '2px dashed',
+          borderColor: dragOver ? 'primary.main' : 'grey.300',
+          borderRadius: 2,
+          p: 4,
+          textAlign: 'center',
+          my: 2,
+          bgcolor: dragOver ? 'primary.50' : 'grey.50',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          '&:hover': {
+            borderColor: 'primary.main',
+            bgcolor: 'primary.50'
+          }
+        }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        onClick={() => document.getElementById('pdf-upload').click()}
       >
-        <h3>Upload PDF Document</h3>
-        <p>Drag and drop a PDF file here, or click to select</p>
+        <CloudUpload sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+        <Typography variant="h6" gutterBottom>
+          Upload PDF Document
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Drag and drop a PDF file here, or click to select
+        </Typography>
         
-        <FileInput
+        <input
           type="file"
           id="pdf-upload"
           accept=".pdf"
           onChange={handleFileSelect}
           disabled={isUploading}
+          style={{ display: 'none' }}
         />
         
-        <UploadButton
-          onClick={() => document.getElementById('pdf-upload').click()}
+        <Button
+          variant="contained"
           disabled={isUploading}
+          startIcon={isUploading ? <CircularProgress size={20} /> : <CloudUpload />}
+          sx={{ mt: 1 }}
         >
           {isUploading ? 'Processing...' : 'Select PDF File'}
-        </UploadButton>
-      </UploaderContainer>
+        </Button>
+      </Paper>
 
       {status && (
-        <StatusMessage className={status.type}>
+        <Alert 
+          severity={status.type === 'error' ? 'error' : status.type === 'success' ? 'success' : 'info'}
+          sx={{ mt: 2 }}
+        >
           {status.message}
-        </StatusMessage>
+        </Alert>
       )}
-    </div>
+    </Box>
   );
 };
 

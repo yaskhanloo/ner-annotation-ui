@@ -31,7 +31,10 @@ export const useAnnotationState = () => {
       setBackendStatus('connected');
     } catch (e) {
       setBackendStatus('disconnected');
-      console.error('Backend connection failed:', e);
+      // Only log in development or if debug is enabled
+      if (import.meta.env.DEV) {
+        console.warn('Backend connection failed:', e.message);
+      }
     }
   };
 
@@ -39,7 +42,9 @@ export const useAnnotationState = () => {
     try {
       await apiService.saveAnnotations(currentDocument, annotations);
     } catch (e) {
-      console.error('Failed to save annotations:', e);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to save annotations:', e.message);
+      }
     }
   };
 
@@ -129,7 +134,9 @@ export const useAnnotationState = () => {
       try {
         await apiService.createEntity(entity);
       } catch (e) {
-        console.error('Failed to save entity:', e);
+        if (import.meta.env.DEV) {
+          console.warn('Failed to save entity:', e.message);
+        }
       }
     }
     setEntities((prev) => [...prev, entity]);
