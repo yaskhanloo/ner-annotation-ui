@@ -22,7 +22,8 @@ const StepperWorkflow = ({
   onPdfTextExtracted,
   customText, setCustomText,
   handleTextChange,
-  backendStatus
+  backendStatus,
+  originalFilename
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
@@ -84,7 +85,7 @@ const StepperWorkflow = ({
           onAnnotationRemove
         }} />;
       case 2:
-        return <ExportStep {...{ annotations, text, entities, handleReset, setActiveStep }} />;
+        return <ExportStep {...{ annotations, text, entities, handleReset, setActiveStep, originalFilename }} />;
       default:
         return 'Unknown step';
     }

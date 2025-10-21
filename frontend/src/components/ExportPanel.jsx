@@ -15,14 +15,21 @@ import {
   DataObject 
 } from '@mui/icons-material';
 
-const ExportPanel = ({ annotations, text, entities }) => {
+const ExportPanel = ({ annotations, text, entities, originalFilename }) => {
+  
+  // Helper function to generate filename with original name, export format, and timestamp
+  const generateFilename = (exportFormat, extension) => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19); // Format: YYYY-MM-DDTHH-MM-SS
+    const baseFilename = originalFilename || 'annotations';
+    return `${baseFilename}_${exportFormat}_${timestamp}.${extension}`;
+  };
   const exportAsJSON = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
     const data = {
       document_info: {
         created_at: new Date().toISOString(),
         total_annotations: annotations.length,
-        annotation_tool: 'Medical NER Annotation UI'
+        annotation_tool: 'Medical NER Annotation UI',
+        original_filename: originalFilename
       },
       text,
       annotations: annotations.map(ann => {
@@ -46,19 +53,19 @@ const ExportPanel = ({ annotations, text, entities }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `medical_ner_annotations_${timestamp}.json`;
+    a.download = generateFilename('json', 'json');
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const exportAsSpacy = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
     const spacyFormat = {
       version: 4,
       meta: {
         lang: "de",
         name: "medical_ner_model",
-        description: "Medical NER annotations for German stroke documents"
+        description: "Medical NER annotations for German stroke documents",
+        original_filename: originalFilename
       },
       data: [{
         text,
@@ -77,13 +84,12 @@ const ExportPanel = ({ annotations, text, entities }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `spacy_medical_ner_${timestamp}.json`;
+    a.download = generateFilename('spacy', 'json');
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const exportForHuggingFace = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
     const tokens = text.split(/\s+/);
     let charIndex = 0;
     const tokenData = [];
@@ -126,7 +132,8 @@ const ExportPanel = ({ annotations, text, entities }) => {
         created_at: new Date().toISOString(),
         language: "de",
         domain: "medical",
-        annotation_tool: "Medical NER Annotation UI"
+        annotation_tool: "Medical NER Annotation UI",
+        original_filename: originalFilename
       }
     };
     
@@ -134,13 +141,12 @@ const ExportPanel = ({ annotations, text, entities }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `huggingface_medical_ner_${timestamp}.json`;
+    a.download = generateFilename('huggingface', 'json');
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const exportAsCoNLL = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
     const tokens = text.split(/\s+/);
     let charIndex = 0;
     const tokenPositions = [];
@@ -178,7 +184,7 @@ const ExportPanel = ({ annotations, text, entities }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `medical_ner_${timestamp}.conll`;
+    a.download = generateFilename('conll', 'conll');
     a.click();
     URL.revokeObjectURL(url);
   };

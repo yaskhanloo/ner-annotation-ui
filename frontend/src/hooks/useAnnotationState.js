@@ -13,6 +13,7 @@ export const useAnnotationState = () => {
   const [customText, setCustomText] = useState('');
   const [newEntity, setNewEntity] = useState({ label: '', description: '', color: '#FF6B6B' });
   const [currentDocument, setCurrentDocument] = useState(null);
+  const [originalFilename, setOriginalFilename] = useState(null);
   const [backendStatus, setBackendStatus] = useState('checking');
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export const useAnnotationState = () => {
     setAnnotations([]);
     setSelectedText(null);
     setCurrentDocument(filename.replace('.pdf', ''));
+    setOriginalFilename(filename.replace('.pdf', ''));
     setCustomText('');
   };
 
@@ -115,6 +117,7 @@ export const useAnnotationState = () => {
     setAnnotations([]);
     setSelectedText(null);
     setCurrentDocument(`manual_text_${Date.now()}`);
+    setOriginalFilename(`manual_text_${Date.now()}`);
   };
 
   const addEntity = async () => {
@@ -163,6 +166,7 @@ export const useAnnotationState = () => {
     setAnnotations(SAMPLE_ANNOTATIONS);
     setCustomText('');
     setCurrentDocument('sample_document');
+    setOriginalFilename('sample_document');
   };
 
   return {
@@ -180,6 +184,7 @@ export const useAnnotationState = () => {
     setCustomText,
     handleTextChange,
     backendStatus,
+    originalFilename,
     newEntity,
     setNewEntity,
     addEntity,

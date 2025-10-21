@@ -8,7 +8,7 @@
  */
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box, AppBar, Toolbar, Typography, Chip } from '@mui/material';
+import { CssBaseline, Box, AppBar, Toolbar, Chip } from '@mui/material';
 import StepperWorkflow from './components/StepperWorkflow';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAnnotationState } from './hooks/useAnnotationState';
@@ -46,6 +46,7 @@ function App() {
     setCustomText,          // Update custom text
     handleTextChange,       // Handle text changes
     backendStatus,          // Backend connection status
+    originalFilename,       // Original filename for downloads
   } = useAnnotationState();
 
   // Helper function to get status chip color
@@ -112,6 +113,7 @@ function App() {
                 setCustomText={setCustomText}
                 handleTextChange={handleTextChange}
                 backendStatus={backendStatus}
+                originalFilename={originalFilename}
               />
             </Box>
           </Box>

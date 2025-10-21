@@ -3,7 +3,7 @@ import { Box, Typography, Paper, Button, Divider } from '@mui/material';
 import { Download, Refresh, Edit, Add } from '@mui/icons-material';
 import ExportPanel from '../ExportPanel';
 
-const ExportStep = ({ annotations, text, entities, handleReset, setActiveStep }) => (
+const ExportStep = ({ annotations, text, entities, handleReset, setActiveStep, originalFilename }) => (
   <Box sx={{ mt: 2 }}>
     <Typography variant="h6" gutterBottom>Step 3: Export Annotations</Typography>
 
@@ -21,7 +21,7 @@ const ExportStep = ({ annotations, text, entities, handleReset, setActiveStep })
       </Box>
     </Paper>
 
-    <ExportPanel annotations={annotations} text={text} entities={entities} />
+    <ExportPanel annotations={annotations} text={text} entities={entities} originalFilename={originalFilename} />
 
     <Divider sx={{ my: 3 }} />
 
